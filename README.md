@@ -18,6 +18,9 @@ See a [live demo] or [Codepen](http://codepen.io/alexkrolick/pen/xgyOXQ/left?edi
    1. [Mixin](#mixin)
 1. [Upgrading to React-Quill v1.0.0](#upgrading-to-react-quill-v100)
 1. [API reference](#api-reference)
+   1. [Exports](#exports)
+   1. [Props](#props)
+   1. [Methods](#methods)
 1. [Browser support](#browser-support)
 1. [Building and testing](#building-and-testing)
    1. [Bundling with Webpack](#bundling-with-webpack)
@@ -32,9 +35,13 @@ Thanks to @clemmy and @alexkrolick for landing this much-awaited change. There a
 
 ---
 
-🎧 **Latest published package version: `v1.0.0-rc.3`**
-Follow React Quill's development on the beta channel leading to `v1.0.0`.
-`npm install react-quill@v1.0.0-rc.3`
+🎧 **Latest published package version: `v1.0.0`**
+
+```sh
+npm install react-quill@v1.0.0
+```
+
+Special thank you to everyone who contributed during the 1.0.0 release cycle!
 
 ---
 
@@ -548,7 +555,7 @@ This property previously set the frequency with which Quill polled the DOM for c
 
 ### Methods
 
-If you have [a ref to a ReactQuill node](https://facebook.github.io/react/docs/more-about-refs.html) ([Codepen example](https://codepen.io/alexkrolick/pen/YNmGar?editors=0011)), you will be able to invoke the following methods:
+If you have [a ref](https://facebook.github.io/react/docs/more-about-refs.html) to a ReactQuill node, you will be able to invoke the following methods:
 
 `focus()`
 : Focuses the editor.
@@ -558,6 +565,54 @@ If you have [a ref to a ReactQuill node](https://facebook.github.io/react/docs/m
 
 `getEditor()`
 : Returns the Quill instance that backs the editor. While you can freely use this to access methods such as `getText()`, please avoid from imperatively manipulating the instance.
+
+<details>
+<summary>Example</summary>
+
+[View this example on Codepen](https://codepen.io/alexkrolick/pen/YNmGar?editors=0011)
+
+
+```jsx
+class Editor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.quillRef = null;      // Quill instance
+    this.reactQuillRef = null; // ReactQuill component
+  }
+
+  componentDidMount() {
+    this.attachQuillRefs()
+  }
+
+  componentDidUpdate() {
+    this.attachQuillRefs()
+  }
+
+  attachQuillRefs = () => {
+    if (typeof this.reactQuillRef.getEditor !== 'function') return;
+    this.quillRef = this.reactQuillRef.getEditor();
+  }
+
+  insertText = () => {
+    var range = this.quillRef.getSelection();
+    let position = range ? range.index : 0;
+    this.quillRef.insertText(position, 'Hello, World! ')
+  }
+
+  render() {
+    return (
+      <div>
+        <ReactQuill
+          ref={(el) => { this.reactQuillRef = el }}
+          theme={'snow'} />
+        <button onClick={this.insertText}>Insert Text</button>
+      </div>
+    )
+  }
+}
+```
+
+</details>
 
 
 ## Building and testing
@@ -652,6 +707,9 @@ This release adds support for Quill v1.0.0+. ⚠️ There are many breaking chan
 - Fixed documentation typos (@l3kn)
 - Started testing with Enzyme (@alexkrolick)
 - Fixed issue where changing props caused re-render artifacts (#147)
+- Fixed bounds validation in setEditorSelection (@wouterh)
+- Updated README.md to reference core.css instead of base.css (@sandbochs)
+- Updated React peerDependency (@rpellerin)
 - Removed inline Parchment formats for font-size and font-family (#217)
 
 #### v0.4.1
@@ -698,14 +756,17 @@ React Quill would not be where it is today without the contributions of many peo
 - @tdg5
 - @jrmmnr
 - @l3kn
+- @rpellerin
+- @sandbochs
+- @wouterh
 
 ## Roadmap
 
 - [x] React 0.14 support
 - [x] Quill v1.0.0+ support
 - [x] Tests!
-- [ ] ES6 rewrite
-
+- [ ] Compatibility with React 16
+- [ ] Additional APIs for working with Quill
 
 ## License
 
